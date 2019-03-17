@@ -1,0 +1,65 @@
+# auto-labeler "full" schema
+
+# enable auto-labeler on issues, prs, or both.
+enable:
+  issues: true
+  prs: true
+# comments object allows you to specify a different message for issues and prs
+
+comments:
+  issues: |
+    Thanks for opening this issue!
+    I have applied any labels matching special text in your title and description.
+
+    Please review the labels and make any necessary changes.
+  prs: |
+    Thanks for the contribution!
+    I have applied any labels matching special text in your title and description.
+
+    Please review the labels and make any necessary changes.
+
+# Labels is an object where:
+# - keys are labels
+# - values are objects of { include: [ pattern ], exclude: [ pattern ] }
+#    - pattern must be a valid regex, and is applied globally to
+#      title + description of issues and/or prs (see enabled config above)
+#    - 'include' patterns will associate a label if any of these patterns match
+#    - 'exclude' patterns will ignore this label if any of these patterns match
+labels:
+  'bug':
+    include:
+      - '\s*\[bug[s]?\]\s*'
+      - '\s*\\bug\s*'
+    exclude: []
+  'help wanted':
+    include:
+      - '\s*help( me)?\s*'
+    exclude:
+      - '\s*\[help\]\s*'
+  'enhancement':
+    include:
+      - '\s*\[feat\]\s*'
+      - '\s*\\enhancement\s*'
+      - '\s*\\feat\s*'
+    exclude: []
+  'documentation':
+    include:
+      - '\s*\[doc[s]?\]\s*'
+      - '\s*\[documentation\]\s*'
+      - '\s*\\docs\s*'
+      - '\s*\\documentation\s*'
+    exclude: []
+  'templating':
+    include:
+      - '\s*[template[s]?\]\s*'
+      - '\s*\[templating\]\s*'
+      - '\s*\\templating\s*'
+    exclude: []
+  'question':
+    include:
+      - '\s*\[question[s]?\]\s*'
+      - '\s*\[[qQ]\]\s*'
+      - '\s*\\question\s*'
+      - '\s*\\[qQ]\s*'
+      - '\s*\[help\]\s*'
+    exclude: []
