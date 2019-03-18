@@ -1,6 +1,6 @@
 # ossify
 
-![master build status](https://img.shields.io/gitlab/pipeline/jimschubert/ossify.svg?label=master&style=flat-square "GitLab CI Build Status")
+[![master build status](https://img.shields.io/gitlab/pipeline/jimschubert/ossify.svg?label=master&style=flat-square "GitLab CI Build Status")](https://gitlab.com/jimschubert/ossify/pipelines)
 
 <blockquote>
 <dl>
