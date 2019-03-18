@@ -12,9 +12,7 @@ import (
 	"path"
 )
 
-var (
-	licenseFlags *LicenseFlags
-)
+var licenseFlags *LicenseFlags
 
 type LicenseFlags struct {
 	licenseId       string

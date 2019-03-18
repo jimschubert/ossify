@@ -6,24 +6,24 @@ import (
 )
 
 type License struct {
-	SupersededBy *string `json:"superseded_by"`
-	Identifiers []Identifier `json:"identifiers"`
-	Text []Text `json:"text"`
-	OtherNames *[]OtherName `json:"other_names"`
-	Id string `json:"id"`
-	Links []Link `json:"links"`
-	Name string `json:"name"`
-	Keywords []string `json:"keywords"`
-}
-
-func (license License) Print() error {
-	_, err := fmt.Printf("%-20s(%s)\n", license.Id, license.Name)
-	return err
+	SupersededBy *string      `json:"superseded_by"`
+	Identifiers  []Identifier `json:"identifiers"`
+	Text         []Text       `json:"text"`
+	OtherNames   *[]OtherName `json:"other_names"`
+	Id           string       `json:"id"`
+	Links        []Link       `json:"links"`
+	Name         string       `json:"name"`
+	Keywords     []string     `json:"keywords"`
 }
 
 // This type alias allows us to create a sort of "dao" atop the set of data.
 // see Go in Action Chapter 2 for somewhat similar approach.
 type Licenses []License
+
+func (license License) Print() error {
+	_, err := fmt.Printf("%-20s(%s)\n", license.Id, license.Name)
+	return err
+}
 
 // enable searching for a specific license
 func (l Licenses) FindById(id string) *License {

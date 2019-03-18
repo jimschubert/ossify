@@ -10,6 +10,7 @@ import (
 )
 
 var ConventionPath = config.DefaultConfig.ConventionPath
+
 func Load() (*[]model.Convention, error) {
 	if ConventionPath == "" {
 		return nil, errors.New("Invalid convention path.")

@@ -2,5 +2,5 @@ package model
 
 type Link struct {
 	Note *string `json:"note"`
-	Url string `json:"url"`
+	Url  string  `json:"url"`
 }

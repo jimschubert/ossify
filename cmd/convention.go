@@ -6,9 +6,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	conventionFlags *ConventionFlags
-)
+var conventionFlags *ConventionFlags
 
 type ConventionFlags struct {
 	id string

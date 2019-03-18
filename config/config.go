@@ -9,12 +9,12 @@ import (
 )
 
 type Config struct {
-	LicensePath string `json:"licensePath"`
+	LicensePath    string `json:"licensePath"`
 	ConventionPath string `json:"conventionPath"`
 }
 
-var DefaultConfig = Config {
-	LicensePath: "",
+var DefaultConfig = Config{
+	LicensePath:    "",
 	ConventionPath: "",
 }
 
@@ -86,7 +86,7 @@ func saveConfig(config *Config) error {
 	return nil
 }
 
-func init(){
+func init() {
 	ConfigManager = &Manager{
 		loadConfig,
 		saveConfig,

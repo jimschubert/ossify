@@ -4,10 +4,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//noinspection GoUnusedGlobalVariable
-var (
-	newFlags *NewFlags
-)
+var newFlags *NewFlags
 
 type NewFlags struct {
 	out string
