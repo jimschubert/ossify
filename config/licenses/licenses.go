@@ -9,7 +9,7 @@ import (
 	"path"
 )
 
-func LoadLicenses() (*model.Licenses, error) {
+func Load() (*model.Licenses, error) {
 	// should this be configurable?
 	location := "data/licenses/licenses.json"
 	var licenses *model.Licenses

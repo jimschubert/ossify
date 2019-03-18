@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/jimschubert/ossify/config"
-	"github.com/jimschubert/ossify/licenses"
+	"github.com/jimschubert/ossify/config/licenses"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"io/ioutil"
@@ -60,7 +60,7 @@ var licenseCmd = &cobra.Command{
 		// TODO: define _where_ local configuration will be held (e.g. ~/.config/ossify), used by this and Add
 		//		 then, pull from OSI list, and merge our local licenses on top of that.
 
-		allLicenses, err := licenses.LoadLicenses()
+		allLicenses, err := licenses.Load()
 		failOnError(err)
 
 		id := licenseFlags.licenseId
@@ -149,7 +149,7 @@ var listLicenseCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Presents a list of known licenses.",
 	Run: func(cmd *cobra.Command, args []string) {
-		licenses, err := licenses.LoadLicenses()
+		licenses, err := licenses.Load()
 		failOnError(err)
 
 		for _, license := range *licenses {
