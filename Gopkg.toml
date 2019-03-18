@@ -33,10 +33,6 @@
   branch = "master"
   name = "github.com/shibukawa/configdir"
 
-[[constraint]]
-  name = "gopkg.in/urfave/cli.v1"
-  version = "1.20.0"
-
 [prune]
   go-tests = true
   unused-packages = true

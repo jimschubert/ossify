@@ -18,6 +18,7 @@ var DefaultConfig = Config {
 	ConventionPath: "",
 }
 
+var Version = "0.1"
 var configName = "settings.json"
 //noinspection GoNameStartsWithPackageName
 var ConfigManager *Manager
