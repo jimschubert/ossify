@@ -1,7 +1,8 @@
 # ossify
 
-:warning: This is an early project that I'm using to become familiar with Go. Contributions are welcome, but this isn't yet to be considered "ready" for anyone to even look at.
+![master build status](https://img.shields.io/gitlab/pipeline/jimschubert/ossify.svg?label=master&style=flat-square "GitLab CI Build Status")
 
+<blockquote>
 <dl>
 <dt><em>ossify (n.)</em></dt>
 <dd>
@@ -11,6 +12,11 @@
     </ul>
 </dd>
 </dl>
+</blockquote>
+
+---
+
+:warning: This is an early project that I'm using to become familiar with Go. Contributions are welcome, but this isn't yet to be considered "ready" for anyone to even look at.
 
 Open Source Software often contain common project layouts and components across multiple projects, languages, or groups.
 This tool aims to provide a means to automate and/or verify projects using conventions; those built into the tool and those defined by the user.
