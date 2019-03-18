@@ -51,7 +51,7 @@ labels:
     exclude: []
   'templating':
     include:
-      - '\s*[template[s]?\]\s*'
+      - '\s*\[template[s]?\]\s*'
       - '\s*\[templating\]\s*'
       - '\s*\\templating\s*'
     exclude: []
