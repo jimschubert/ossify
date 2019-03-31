@@ -2,6 +2,7 @@ package conventions
 
 import (
 	"github.com/jimschubert/ossify/model"
+	"github.com/jimschubert/ossify/util"
 	"reflect"
 	"testing"
 )
@@ -23,7 +24,7 @@ func Test_indexOf(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := model.indexOf(tt.args.data, tt.args.search); got != tt.want {
+			if got := util.StringSearch(tt.args.data, tt.args.search); got != tt.want {
 				t.Errorf("indexOf() = %v, want %v", got, tt.want)
 			}
 		})

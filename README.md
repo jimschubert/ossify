@@ -31,3 +31,8 @@ This project aims to go one step further and include templating and configuratio
 * `CONTRIBUTING.md`
 * GitHub Issues and Pull Request templates
 
+## License
+
+This project is [Licensed MIT](./LICENSE)
+
+All included license text is [Licensed CC0 1.0 Universal](./data/licenses/LICENSE.CC0)

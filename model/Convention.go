@@ -3,6 +3,7 @@ package model
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/jimschubert/ossify/util"
 	"github.com/pkg/errors"
 	"strings"
 )
@@ -59,14 +60,6 @@ func NewRule(level StrictnessLevel, ruleType RuleType, value string) *Rule {
 	return &Rule{Level: level, Type: ruleType, Value: value}
 }
 
-func indexOf(data []string, search string) int {
-	for index, value := range data {
-		if search == value {
-			return index
-		}
-	}
-	return -1
-}
 
 func (r *Rule) MarshalJSON() ([]byte, error) {
 	return json.Marshal(map[string]interface{}{
@@ -87,12 +80,12 @@ func (r *Rule) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	ruleType := indexOf(ruleTypeNames, other.Type)
+	ruleType := util.StringSearch(ruleTypeNames, other.Type)
 	if ruleType == -1 {
 		return errors.Errorf("type %s is not valid", other.Type)
 	}
 
-	level := indexOf(strictnessLevelNames, other.Level)
+	level := util.StringSearch(strictnessLevelNames, other.Level)
 	if level == -1 {
 		return errors.Errorf("level %s is not valid", other.Level)
 	}
