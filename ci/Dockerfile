@@ -22,6 +22,6 @@ RUN apt-get update \
 
 VOLUME $GOPATH/src
 
-COPY ./ci/entrypoint.sh /
+COPY ./entrypoint.sh /
 
 ENTRYPOINT /entrypoint.sh
