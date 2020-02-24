@@ -9,14 +9,42 @@ builds:
     # Custom ldflags templates.
     # Default is `-s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=goreleaser`.
     ldflags:
-      - -s -w -X github.com/jimschubert/ossify/config.Version={{.Version}} -X github.com/jimschubert/ossify/config.Commit={{.Commit}} -X github.com/jimschubert/ossify/config.Date={{.Date}} -X main.builtBy=goreleaser
+      - -s -w -X github.com/jimschubert/ossify/config.Version={{.Version}} -X github.com/jimschubert/ossify/config.Commit={{.ShortCommit}} -X github.com/jimschubert/ossify/config.Date={{.Date}} -X main.builtBy=goreleaser
+    goos:
+      - darwin
+      - linux
+      - windows
+    goarch:
+      - amd64
+      - 386
+      - arm
+      - arm64
+    ignore:
+      - goos: darwin
+        goarch: 386
+      - goos: windows
+        goarch: 386
 archives:
-  - replacements:
+  -
+    replacements:
       darwin: Darwin
       linux: Linux
       windows: Windows
       386: i386
       amd64: x86_64
+
+    format: tar.gz
+
+    format_overrides:
+      - goos: windows
+        format: zip
+
+    wrap_in_directory: '{{ .ProjectName }}-{{.Version}}'
+
+    files:
+      - LICENSE
+      - README.md
+      - data/**/*
 checksum:
   name_template: 'checksums.txt'
 snapshot:
