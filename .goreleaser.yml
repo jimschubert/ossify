@@ -6,6 +6,10 @@ before:
 builds:
   - env:
       - CGO_ENABLED=0
+    # Custom ldflags templates.
+    # Default is `-s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=goreleaser`.
+    ldflags:
+      - -s -w -X github.com/jimschubert/ossify/config.Version={{.Version}} -X github.com/jimschubert/ossify/config.Commit={{.Commit}} -X github.com/jimschubert/ossify/config.Date={{.Date}} -X main.builtBy=goreleaser
 archives:
   - replacements:
       darwin: Darwin

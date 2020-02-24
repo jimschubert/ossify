@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/jimschubert/ossify/config"
 	"github.com/spf13/cobra"
+	"strings"
 )
 
 func init() {
@@ -14,8 +15,11 @@ var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Print the version number of ossify",
 	Run: func(cmd *cobra.Command, args []string) {
-		// TODO: consider using goxc to set version on build.
-		// see https://sbstjn.com/create-golang-cli-application-with-cobra-and-goxc.html
-		fmt.Printf("ossify %s\n", config.Version)
+		// Version string can be tested with:
+		// goreleaser release --skip-publish --snapshot --rm-dist
+		var str strings.Builder
+		str.WriteString(fmt.Sprintf("ossify %s (%s)\n", config.Version, config.Commit))
+		str.WriteString(fmt.Sprintf("Built: %s", config.Date))
+		fmt.Println(str.String())
 	},
 }

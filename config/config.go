@@ -19,6 +19,9 @@ var DefaultConfig = Config{
 }
 
 var Version = "0.1"
+var Commit = "n/a"
+var Date = "n/a"
+
 var configName = "settings.json"
 //noinspection GoNameStartsWithPackageName
 var ConfigManager *Manager
