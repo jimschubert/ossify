@@ -14,6 +14,7 @@ func init() {
 var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Print the version number of ossify",
+	Hidden: true,
 	Run: func(cmd *cobra.Command, args []string) {
 		// Version string can be tested with:
 		// goreleaser release --skip-publish --snapshot --rm-dist
