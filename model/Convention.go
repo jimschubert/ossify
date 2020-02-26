@@ -2,9 +2,9 @@ package model
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/jimschubert/ossify/util"
-	"github.com/pkg/errors"
 	"strings"
 )
 
@@ -82,12 +82,12 @@ func (r *Rule) UnmarshalJSON(data []byte) error {
 
 	ruleType := util.StringSearch(ruleTypeNames, other.Type)
 	if ruleType == -1 {
-		return errors.Errorf("type %s is not valid", other.Type)
+		return errors.New(fmt.Sprintf("type %s is not valid", other.Type))
 	}
 
 	level := util.StringSearch(strictnessLevelNames, other.Level)
 	if level == -1 {
-		return errors.Errorf("level %s is not valid", other.Level)
+		return errors.New(fmt.Sprintf("level %s is not valid", other.Level))
 	}
 
 	r.Value = other.Value

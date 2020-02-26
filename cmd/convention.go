@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"github.com/jimschubert/ossify/config"
 	"github.com/jimschubert/ossify/config/conventions"
 	"github.com/spf13/cobra"
 )
@@ -57,10 +56,6 @@ var listConventionCmd = &cobra.Command{
 	Use: "list",
 	Short: "Presents a list of known conventions.",
 	Run: func(cmd *cobra.Command, args []string) {
-		conf, err := config.ConfigManager.Load()
-		failOnError(err)
-
-		conventions.ConventionPath = conf.ConventionPath
 		conventions, err := conventions.Load()
 		failOnError(err)
 

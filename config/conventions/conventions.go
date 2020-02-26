@@ -2,24 +2,27 @@ package conventions
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/jimschubert/ossify/config"
 	"github.com/jimschubert/ossify/model"
-	"github.com/pkg/errors"
 	"io/ioutil"
 	"path"
 )
 
-var ConventionPath = config.DefaultConfig.ConventionPath
-
 func Load() (*[]model.Convention, error) {
-	if ConventionPath == "" {
-		return nil, errors.New("Invalid convention path.")
+	c, e := config.ConfigManager.Load()
+	if e != nil {
+		return nil, e
+	}
+	conventionPath := c.ConventionPath
+	if conventionPath == "" {
+		return nil, errors.New("invalid convention path")
 	}
 
 	var conventions = make([]model.Convention, 2)
 	copy(conventions, DefaultConventions)
 
-	var files, err = ioutil.ReadDir(ConventionPath)
+	var files, err = ioutil.ReadDir(conventionPath)
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +32,7 @@ func Load() (*[]model.Convention, error) {
 			var convention model.Convention
 
 			var bytes []byte
-			bytes, err = ioutil.ReadFile(path.Join(ConventionPath, file.Name()))
+			bytes, err = ioutil.ReadFile(path.Join(conventionPath, file.Name()))
 			if err != nil {
 				continue
 			}

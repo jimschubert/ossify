@@ -1,10 +1,10 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"github.com/jimschubert/ossify/config"
 	"github.com/jimschubert/ossify/config/licenses"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"io/ioutil"
 	"log"

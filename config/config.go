@@ -2,9 +2,9 @@ package config
 
 import (
 	"encoding/json"
-	"github.com/pkg/errors"
-	"github.com/shibukawa/configdir"
-	"path"
+	"io/ioutil"
+	"log"
+	"os"
 	"path/filepath"
 )
 
@@ -13,16 +13,14 @@ type Config struct {
 	ConventionPath string `json:"conventionPath"`
 }
 
-var DefaultConfig = Config{
-	LicensePath:    "",
-	ConventionPath: "",
-}
+var defaultConfig Config
 
 var Version = "0.1"
 var Commit = "n/a"
 var Date = "n/a"
 
-var configName = "settings.json"
+var configName = ".config/ossify/settings.json"
+
 //noinspection GoNameStartsWithPackageName
 var ConfigManager *Manager
 
@@ -34,65 +32,77 @@ type Manager struct {
 	Save SaveConfig
 }
 
-func applicationConfigDir() configdir.ConfigDir {
-	return configdir.New("", "ossify")
+func fullConfigPath(c string) (string, error) {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return "", err
+	}
+
+	fullPath := filepath.Join(home, c)
+	_, err = os.Stat(fullPath)
+	if os.IsNotExist(err) {
+		err = os.MkdirAll(filepath.Dir(fullPath), 0755)
+		if err != nil {
+			return "", err
+		}
+	}
+
+	return fullPath, nil
 }
 
 func loadConfig() (*Config, error) {
-	var config Config
-	configDirs := applicationConfigDir()
-	// optional: local path has the highest priority
-	configDirs.LocalPath, _ = filepath.Abs(".")
-	existing := configDirs.QueryFolderContainsFile(configName)
-
-	if existing != nil {
-		data, _ := existing.ReadFile(configName)
-		err := json.Unmarshal(data, &config)
-		if err != nil {
+	var c Config
+	fullPath, err := fullConfigPath(configName)
+	if err != nil {
+		return nil, err
+	}
+	content, err := ioutil.ReadFile(fullPath)
+	if os.IsNotExist(err) {
+		c = defaultConfig
+		if err := saveConfig(&c); err != nil {
 			return nil, err
+		} else {
+			return &c, nil
 		}
-	} else {
-		config = DefaultConfig
-		config.LicensePath = path.Join(configDirs.QueryCacheFolder().Path, "licenses")
-		config.ConventionPath = path.Join(configDirs.QueryCacheFolder().Path, "conventions")
-		err := saveConfig(&config)
+	}
+
+	if err = json.Unmarshal(content, &c); err != nil {
 		return nil, err
 	}
 
-	return &config, nil
+	return &c, nil
 }
 
 func saveConfig(config *Config) error {
-	configDirs := applicationConfigDir()
-	configDirs.LocalPath, _ = filepath.Abs(".")
-	existing := configDirs.QueryFolderContainsFile(configName)
-	data, err := json.MarshalIndent(&config, "", "   ")
+	fullPath, err := fullConfigPath(configName)
 	if err != nil {
 		return err
 	}
 
-	if existing != nil {
-		if err = existing.WriteFile(configName, data); err != nil {
-			return err
-		}
-	} else {
-		folders := configDirs.QueryFolders(configdir.Global)
-		if len(folders) > 0 {
-			folder := folders[0]
-			if err = folder.WriteFile(configName, data); err != nil {
-				return err
-			}
-		} else {
-			return errors.New("no configuration folders available, cannot proceed")
-		}
+	content, err := json.Marshal(config)
+	if err != nil {
+		return err
 	}
-	return nil
+
+	return ioutil.WriteFile(fullPath, content, 0600)
 }
 
 func init() {
+	licensePath, err := fullConfigPath(".config/ossify/licenses")
+	if err != nil {
+		log.Fatal("Failed to create configuration path(s).")
+	}
+	conventionsPath, err := fullConfigPath(".config/ossify/conventions")
+	if err != nil {
+		log.Fatal("Failed to create configuration path(s).")
+	}
+	defaultConfig = Config{
+		LicensePath:    licensePath,
+		ConventionPath: conventionsPath,
+	}
 	ConfigManager = &Manager{
-		loadConfig,
-		saveConfig,
+		Load: loadConfig,
+		Save: saveConfig,
 	}
 	if _, err := ConfigManager.Load(); err != nil {
 		panic(err)
