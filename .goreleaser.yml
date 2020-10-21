@@ -56,8 +56,8 @@ dockers:
     goarch: 386
 
     image_templates:
-      - "jimschubert/{{ .ProjectName }}/{{ .ProjectName }}:latest"
-      - "jimschubert/{{ .ProjectName }}/{{ .ProjectName }}:{{ .Tag }}"
+      - "jimschubert/{{ .ProjectName }}:latest"
+      - "jimschubert/{{ .ProjectName }}:{{ .Tag }}"
 
     dockerfile: release.Dockerfile
 
