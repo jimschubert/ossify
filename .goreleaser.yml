@@ -1,8 +1,8 @@
 # Make sure to check the documentation at http://goreleaser.com
 before:
   hooks:
-    # You may remove this if you don't use go modules.
-    - go mod download
+    - go mod tidy
+    - packr
 builds:
   - env:
       - CGO_ENABLED=0
@@ -17,13 +17,6 @@ builds:
     goarch:
       - amd64
       - 386
-      - arm
-      - arm64
-    ignore:
-      - goos: darwin
-        goarch: 386
-      - goos: windows
-        goarch: 386
 archives:
   -
     replacements:
@@ -34,7 +27,7 @@ archives:
       amd64: x86_64
 
     format: tar.gz
-
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     format_overrides:
       - goos: windows
         format: zip
@@ -44,7 +37,6 @@ archives:
     files:
       - LICENSE
       - README.md
-      - data/**/*
 checksum:
   name_template: 'checksums.txt'
 snapshot:
@@ -55,3 +47,24 @@ changelog:
     exclude:
       - '^docs:'
       - '^test:'
+      - '^doc[s]?:'
+      - '^\[doc[s]?\]'
+      - '^wip:'
+      - '^WIP:'
+dockers:
+  - goos: linux
+    goarch: 386
+
+    image_templates:
+      - "jimschubert/{{ .ProjectName }}/{{ .ProjectName }}:latest"
+      - "jimschubert/{{ .ProjectName }}/{{ .ProjectName }}:{{ .Tag }}"
+
+    dockerfile: release.Dockerfile
+
+    build_flag_templates:
+      - "--pull"
+      - "--label=org.opencontainers.image.created={{ .Date }}"
+      - "--label=org.opencontainers.image.name={{ .ProjectName }}"
+      - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
+      - "--label=org.opencontainers.image.version={{ .Version }}"
+      - "--build-arg=APP_NAME={{ .ProjectName }}"

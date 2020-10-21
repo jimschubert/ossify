@@ -1,5 +1,6 @@
 ossify
 dist/
+*-packr.go
 
 # Created by https://www.gitignore.io/api/go,intellij,linux,osx
 # Edit at https://www.gitignore.io/?templates=go,intellij,linux,osx

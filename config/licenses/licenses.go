@@ -3,17 +3,20 @@ package licenses
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/jimschubert/ossify/model"
 	"io/ioutil"
 	"os"
 	"path"
+
+	"github.com/gobuffalo/packr"
+
+	"github.com/jimschubert/ossify/model"
 )
 
 func Load() (*model.Licenses, error) {
 	// should this be configurable?
-	location := "data/licenses/licenses.json"
+	box := packr.NewBox("../../data/licenses")
 	var licenses *model.Licenses
-	bytes, err := ioutil.ReadFile(location)
+	bytes, err := box.Find("licenses.json")
 	if err != nil {
 		return nil, err
 	}
@@ -23,34 +26,24 @@ func Load() (*model.Licenses, error) {
 
 func PrintLicenseText(id string, customTemplateLocation string) error {
 	// should this be configurable?
-	location := path.Join("data/licenses/texts/plain/", id)
+	box := packr.NewBox("../../data/licenses")
+	location := path.Join("texts/plain/", id)
 	customLocation := path.Join(customTemplateLocation, id)
 
-	var useCustom bool
+	var b []byte
 	// user-defined license templates take precedence over built-ins.
 	if _, customErr := os.Stat(customLocation); os.IsNotExist(customErr) {
-		if _, err := os.Stat(location); os.IsNotExist(err) {
+		embeddedContent, err := box.Find(location)
+		if err != nil {
 			return err
-		} else {
-			useCustom = false
 		}
+		b = embeddedContent
 	} else {
-		useCustom = true
-	}
-
-	var b []byte
-	if useCustom {
 		customContent, err := ioutil.ReadFile(customLocation)
 		if err != nil {
 			return err
 		}
 		b = customContent
-	} else {
-		embeddedContent, err := ioutil.ReadFile(location)
-		if err != nil {
-			return err
-		}
-		b = embeddedContent
 	}
 
 	str := string(b)
