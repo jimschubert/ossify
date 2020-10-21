@@ -41,6 +41,3 @@ jobs:
           args: release --rm-dist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        commands:
-          - go get -u github.com/gobuffalo/packr/packr
-          - goreleaser release -f goreleaser.yml --rm-dist --skip-validate
