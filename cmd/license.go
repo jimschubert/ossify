@@ -81,7 +81,7 @@ var licenseCmd = &cobra.Command{
 			details := licenseFlags.details
 			if license != nil {
 				if details {
-					_ = license.Print()
+					_ = license.PrintDetails()
 				} else {
 					err := licenses.PrintLicenseText(license.Id, conf.LicensePath)
 					failOnError(err)

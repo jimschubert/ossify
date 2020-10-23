@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/fatih/color"
 	"github.com/lithammer/fuzzysearch/fuzzy"
 )
 
@@ -23,7 +24,53 @@ type License struct {
 type Licenses []License
 
 func (license License) Print() error {
-	_, err := fmt.Printf("%-20s(%s)\n", license.Id, license.Name)
+	d := color.New(color.FgWhite, color.Bold)
+	_, err := d.Printf("%-20s(%s)\n", license.Id, license.Name)
+	return err
+}
+
+func (license License) PrintDetails() error {
+	builder := strings.Builder{}
+
+	bold := color.New(color.FgWhite, color.Bold)
+	italic := color.New(color.FgWhite, color.Italic)
+	warn := color.New(color.FgRed, color.Italic)
+	builder.WriteString(bold.Sprintf("%-20s(%s)\n", license.Id, license.Name))
+	if len(license.Keywords) > 0 {
+		builder.WriteString(italic.Sprint(strings.Join(license.Keywords, ", ")))
+		builder.WriteString("\n")
+	}
+	if license.SupersededBy != nil {
+		builder.WriteString(warn.Sprintf("This license is superseded by %s\n", *license.SupersededBy))
+	}
+
+	if license.OtherNames != nil && len(*license.OtherNames) > 0 {
+		builder.WriteString(bold.Sprintln("\nCommon names"))
+		for _, other := range *license.OtherNames {
+			builder.WriteString(fmt.Sprintf("  * %s\n", other.Name))
+		}
+	}
+
+	if len(license.Identifiers) > 0 {
+		builder.WriteString(bold.Sprintln("\nLicense Standards"))
+		for _, identifier := range license.Identifiers {
+			builder.WriteString(fmt.Sprintf("  * %-10s %s\t\n", identifier.Scheme, identifier.Identifier))
+		}
+	}
+
+	if len(license.Links) > 0 {
+		builder.WriteString(bold.Sprintln("\nLinks"))
+		for _, link := range license.Links {
+			builder.WriteString("  * ")
+			builder.WriteString(link.Url)
+			if link.Note != nil {
+				builder.WriteString(italic.Sprintf(" (%s)", *link.Note))
+			}
+			builder.WriteString("\n")
+		}
+	}
+
+	_, err := fmt.Print(builder.String())
 	return err
 }
 

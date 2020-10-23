@@ -3,6 +3,7 @@ module github.com/jimschubert/ossify
 go 1.14
 
 require (
+	github.com/fatih/color v1.7.0
 	github.com/gobuffalo/envy v1.9.0 // indirect
 	github.com/gobuffalo/packd v1.0.0 // indirect
 	github.com/gobuffalo/packr v1.30.1
