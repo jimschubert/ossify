@@ -66,9 +66,14 @@ var licenseCmd = &cobra.Command{
 		id := licenseFlags.licenseId
 		keywords := licenseFlags.keyword
 		search := licenseFlags.search
+		// consider an --all option
 
 		if len(id) == 0 && len(keywords) == 0 && len(search) == 0 {
-			keywords = append(keywords, "popular")
+			if len(args) == 1 {
+				id = args[0]
+			} else {
+				keywords = append(keywords, "popular")
+			}
 		}
 
 		if len(id) > 0 {

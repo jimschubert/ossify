@@ -3,6 +3,8 @@ package model
 import (
 	"fmt"
 	"strings"
+
+	"github.com/lithammer/fuzzysearch/fuzzy"
 )
 
 type License struct {
@@ -28,7 +30,7 @@ func (license License) Print() error {
 // enable searching for a specific license
 func (l Licenses) FindById(id string) *License {
 	for _, license := range l {
-		if license.Id == id {
+		if strings.Contains(strings.ToLower(license.Id), strings.ToLower(id)) {
 			return &license
 		}
 	}
@@ -39,8 +41,10 @@ func (l Licenses) FindById(id string) *License {
 func (l Licenses) FindByKeyword(keyword string) *Licenses {
 	var licenses Licenses
 	for _, license := range l {
-		if license.Id == keyword {
-			licenses = append(licenses, license)
+		for _, kw := range license.Keywords {
+			if kw == keyword {
+				licenses = append(licenses, license)
+			}
 		}
 	}
 	return &licenses
@@ -49,57 +53,40 @@ func (l Licenses) FindByKeyword(keyword string) *Licenses {
 // enable a loose free-form textual search
 func (l Licenses) Search(term string) *Licenses {
 	var licenses Licenses
+SearchLoop:
 	for _, license := range l {
-		var added = false
-		if strings.Contains(license.Id, term) {
+		// lowercase compare
+		if strings.Contains(strings.ToLower(license.Id), strings.ToLower(term)) {
 			licenses = append(licenses, license)
-			added = true
+			continue SearchLoop
 		}
 
-		if !added && license.Identifiers != nil {
+		if license.Identifiers != nil {
 			for _, identifier := range license.Identifiers {
-				if added {
-					break
-				}
-				if strings.Contains(identifier.Identifier, term) {
+				if "SPDX" == identifier.Scheme {
+					// use exact case-sensitive match
+					if term == identifier.Identifier {
+						licenses = append(licenses, license)
+						continue SearchLoop
+					}
+				} else if fuzzy.MatchNormalizedFold(term, identifier.Identifier) {
 					licenses = append(licenses, license)
-					added = true
+					continue SearchLoop
 				}
 			}
 		}
 
-		if !added && license.Text != nil {
-			for _, text := range license.Text {
-				if added {
-					break
-				}
-				if strings.Contains(text.Title, term) {
-					licenses = append(licenses, license)
-					added = true
-				}
-			}
+		if fuzzy.MatchNormalizedFold(term, license.Name) {
+			licenses = append(licenses, license)
+			continue SearchLoop
 		}
 
-		if !added {
-			if strings.Contains(license.Name, term) {
-				licenses = append(licenses, license)
-				added = true
-			}
-		}
-
-		if !added && license.OtherNames != nil {
+		if license.OtherNames != nil {
 			for _, otherNames := range *license.OtherNames {
-				if added {
-					break
-				}
-				if otherNames.Note != nil && strings.Contains(*otherNames.Note, term) {
+				// We don't really care about the Note field here because it's just supplemental to the name.
+				if fuzzy.MatchNormalizedFold(term, otherNames.Name) {
 					licenses = append(licenses, license)
-					added = true
-				}
-
-				if !added && strings.Contains(otherNames.Name, term) {
-					licenses = append(licenses, license)
-					added = true
+					continue SearchLoop
 				}
 			}
 		}
