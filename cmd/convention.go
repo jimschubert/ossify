@@ -1,8 +1,9 @@
 package cmd
 
 import (
-	"github.com/jimschubert/ossify/config/conventions"
 	"github.com/spf13/cobra"
+
+	"github.com/jimschubert/ossify/config/conventions"
 )
 
 var conventionFlags *ConventionFlags
@@ -33,27 +34,27 @@ var conventionCmd = &cobra.Command{
 }
 
 var addConventionCmd = &cobra.Command{
-	Use: "add [options]",
-	Args: cobra.MinimumNArgs(1),
+	Use:   "add [options]",
+	Args:  cobra.MinimumNArgs(1),
 	Short: "Adds a new custom convention (local-only) to the list of known conventions",
 	Run: func(cmd *cobra.Command, args []string) {
 		// TODO
-		//config, err := config.LoadConfig()
-		//failOnError(err)
+		// config, err := config.LoadConfig()
+		// failOnError(err)
 		//
-		//conventionsPath := config.ConventionsPath
-		//if conventionsPath == "" {
+		// conventionsPath := config.ConventionsPath
+		// if conventionsPath == "" {
 		//	fmt.Println("invalid conventions path: please update your configuration and try again")
 		//  os.Exit(1)
-		//}
+		// }
 		//
-		//err = os.MkdirAll(conventionsPath, 0700)
-		//failOnError(err)
+		// err = os.MkdirAll(conventionsPath, 0700)
+		// failOnError(err)
 	},
 }
 
 var listConventionCmd = &cobra.Command{
-	Use: "list",
+	Use:   "list",
 	Short: "Presents a list of known conventions.",
 	Run: func(cmd *cobra.Command, args []string) {
 		conventions, err := conventions.Load()

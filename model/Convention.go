@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/jimschubert/ossify/util"
 	"strings"
+
+	"github.com/jimschubert/ossify/util"
 )
 
 type StrictnessLevel int

@@ -35,7 +35,7 @@ var newCmd = &cobra.Command{
 	},
 }
 
-var newLicenseCmd =  &cobra.Command{
+var newLicenseCmd = &cobra.Command{
 	Use:   "license",
 	Short: "Create or evaluate a new license for your repository.",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -43,7 +43,7 @@ var newLicenseCmd =  &cobra.Command{
 	},
 }
 
-var newProjectCmd =  &cobra.Command{
+var newProjectCmd = &cobra.Command{
 	Use:   "project",
 	Short: "Create a new project.",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -51,7 +51,7 @@ var newProjectCmd =  &cobra.Command{
 	},
 }
 
-var newRepositoryCmd =  &cobra.Command{
+var newRepositoryCmd = &cobra.Command{
 	Use:   "repository",
 	Short: "Create a new remote repository.",
 	Run: func(cmd *cobra.Command, args []string) {

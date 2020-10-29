@@ -2,9 +2,11 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/jimschubert/ossify/config"
-	"github.com/spf13/cobra"
 	"strings"
+
+	"github.com/spf13/cobra"
+
+	"github.com/jimschubert/ossify/config"
 )
 
 func init() {
@@ -12,8 +14,8 @@ func init() {
 }
 
 var versionCmd = &cobra.Command{
-	Use:   "version",
-	Short: "Print the version number of ossify",
+	Use:    "version",
+	Short:  "Print the version number of ossify",
 	Hidden: true,
 	Run: func(cmd *cobra.Command, args []string) {
 		// Version string can be tested with:

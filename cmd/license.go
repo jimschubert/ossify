@@ -3,13 +3,15 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"github.com/jimschubert/ossify/config"
-	"github.com/jimschubert/ossify/config/licenses"
-	"github.com/spf13/cobra"
 	"io/ioutil"
 	"log"
 	"os"
 	"path"
+
+	"github.com/spf13/cobra"
+
+	"github.com/jimschubert/ossify/config"
+	"github.com/jimschubert/ossify/config/licenses"
 )
 
 var licenseFlags *LicenseFlags
