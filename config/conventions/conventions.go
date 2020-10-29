@@ -3,10 +3,12 @@ package conventions
 import (
 	"encoding/json"
 	"errors"
+	"io/ioutil"
+	"os"
+	"path"
+
 	"github.com/jimschubert/ossify/config"
 	"github.com/jimschubert/ossify/model"
-	"io/ioutil"
-	"path"
 )
 
 func Load() (*[]model.Convention, error) {
@@ -22,28 +24,30 @@ func Load() (*[]model.Convention, error) {
 	var conventions = make([]model.Convention, 2)
 	copy(conventions, DefaultConventions)
 
-	var files, err = ioutil.ReadDir(conventionPath)
-	if err != nil {
-		return nil, err
-	}
+	if _, err := os.Stat(conventionPath); os.IsExist(err) {
+		var files, err = ioutil.ReadDir(conventionPath)
+		if err != nil {
+			return nil, err
+		}
 
-	for _, file := range files {
-		if !file.IsDir() {
-			var convention model.Convention
+		for _, file := range files {
+			if !file.IsDir() {
+				var convention model.Convention
 
-			var bytes []byte
-			bytes, err = ioutil.ReadFile(path.Join(conventionPath, file.Name()))
-			if err != nil {
-				continue
+				var bytes []byte
+				bytes, err = ioutil.ReadFile(path.Join(conventionPath, file.Name()))
+				if err != nil {
+					continue
+				}
+
+				err = json.Unmarshal(bytes, &convention)
+				conventions = append(conventions, convention)
 			}
-
-			err = json.Unmarshal(bytes, &convention)
-			conventions = append(conventions, convention)
 		}
 	}
 
 	// returns all available conventions and last known error
-	return &conventions, err
+	return &conventions, nil
 }
 
 var DefaultConventions = []model.Convention{
@@ -61,7 +65,7 @@ var StandardDistributionConvention = model.Convention{
 		{model.Required, model.Directory, "test"},
 		{model.Optional, model.Directory, "tools"},
 		{model.Required, model.File, "LICENSE"},
-		{model.Required, model.Directory, "README.md"},
+		{model.Required, model.File, "README.md"},
 	},
 }
 
@@ -79,7 +83,7 @@ var GoConvention = model.Convention{
 		{model.Optional, model.Directory, "vendor"},
 		{model.Prohibited, model.Directory, "src"},
 		{model.Required, model.File, "LICENSE"},
-		{model.Required, model.Directory, "README.md"},
+		{model.Required, model.File, "README.md"},
 	},
 }
 
