@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"os"
 	"path"
@@ -147,7 +146,7 @@ var addLicenseCmd = &cobra.Command{
 		err = os.WriteFile(targetFile, data, 0644)
 		failOnError(err)
 
-		log.Println(fmt.Sprintf("Saved license with id %s to %s", licenseFlags.licenseId, targetFile))
+		log.Printf("Saved license with id %s to %s", licenseFlags.licenseId, targetFile)
 	},
 }
 

@@ -36,10 +36,15 @@ func Load() (*[]model.Convention, error) {
 				var bytes []byte
 				bytes, err = os.ReadFile(path.Join(conventionPath, file.Name()))
 				if err != nil {
+					// TODO: warn
 					continue
 				}
 
 				err = json.Unmarshal(bytes, &convention)
+				if err != nil {
+					// TODO: warn
+					continue
+				}
 				conventions = append(conventions, convention)
 			}
 		}
@@ -57,32 +62,32 @@ var DefaultConventions = []model.Convention{
 var StandardDistributionConvention = model.Convention{
 	Name: "Standard Distribution",
 	Rules: []model.Rule{
-		{model.Required, model.Directory, "dist"},
-		{model.Required, model.Directory, "docs"},
-		{model.Optional, model.Directory, "lib"},
-		{model.Required, model.Directory, "src"},
-		{model.Required, model.Directory, "test"},
-		{model.Optional, model.Directory, "tools"},
-		{model.Required, model.File, "LICENSE"},
-		{model.Required, model.File, "README.md"},
+		{Level: model.Required, Type: model.Directory, Value: "dist"},
+		{Level: model.Required, Type: model.Directory, Value: "docs"},
+		{Level: model.Optional, Type: model.Directory, Value: "lib"},
+		{Level: model.Required, Type: model.Directory, Value: "src"},
+		{Level: model.Required, Type: model.Directory, Value: "test"},
+		{Level: model.Optional, Type: model.Directory, Value: "tools"},
+		{Level: model.Required, Type: model.File, Value: "LICENSE"},
+		{Level: model.Required, Type: model.File, Value: "README.md"},
 	},
 }
 
 var GoConvention = model.Convention{
 	Name: "Go",
 	Rules: []model.Rule{
-		{model.Optional, model.Directory, "configs"},
-		{model.Optional, model.Directory, "init"},
-		{model.Optional, model.Directory, "scripts"},
-		{model.Required, model.Directory, "docs"},
-		{model.Optional, model.Directory, "tools"},
-		{model.Optional, model.Directory, "deployments"},
-		{model.Optional, model.Directory, "test"},
-		{model.Optional, model.Directory, "build"},
-		{model.Optional, model.Directory, "vendor"},
-		{model.Prohibited, model.Directory, "src"},
-		{model.Required, model.File, "LICENSE"},
-		{model.Required, model.File, "README.md"},
+		{Level: model.Optional, Type: model.Directory, Value: "configs"},
+		{Level: model.Optional, Type: model.Directory, Value: "init"},
+		{Level: model.Optional, Type: model.Directory, Value: "scripts"},
+		{Level: model.Required, Type: model.Directory, Value: "docs"},
+		{Level: model.Optional, Type: model.Directory, Value: "tools"},
+		{Level: model.Optional, Type: model.Directory, Value: "deployments"},
+		{Level: model.Optional, Type: model.Directory, Value: "test"},
+		{Level: model.Optional, Type: model.Directory, Value: "build"},
+		{Level: model.Optional, Type: model.Directory, Value: "vendor"},
+		{Level: model.Prohibited, Type: model.Directory, Value: "src"},
+		{Level: model.Required, Type: model.File, Value: "LICENSE"},
+		{Level: model.Required, Type: model.File, Value: "README.md"},
 	},
 }
 

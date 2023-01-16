@@ -44,7 +44,7 @@ type Convention struct {
 	Rules []Rule `json:"rules"`
 }
 
-//noinspection GoUnusedExportedFunction
+// noinspection GoUnusedExportedFunction
 func NewConvention(name string, rules []Rule) *Convention {
 	return &Convention{Name: name, Rules: rules}
 }
@@ -55,11 +55,10 @@ type Rule struct {
 	Value string
 }
 
-//noinspection GoUnusedExportedFunction
+// noinspection GoUnusedExportedFunction
 func NewRule(level StrictnessLevel, ruleType RuleType, value string) *Rule {
 	return &Rule{Level: level, Type: ruleType, Value: value}
 }
-
 
 func (r *Rule) MarshalJSON() ([]byte, error) {
 	return json.Marshal(map[string]interface{}{
@@ -108,7 +107,7 @@ func (c *Convention) Print() error {
 			str.WriteString(fmt.Sprintf("  - %-20s %-15s %-10s\n", r.Value, ruleTypeNames[r.Type], strictnessLevelNames[r.Level]))
 		}
 	}
-	_, err := fmt.Printf(str.String())
+	_, err := fmt.Print(str.String())
 	return err
 }
 
