@@ -24,6 +24,7 @@ archives:
       - goos: windows
         format: zip
 
+    rlcp: true
     wrap_in_directory: '{{ .ProjectName }}-{{.Version}}'
 
     files:
