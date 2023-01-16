@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/jimschubert/ossify/model"
-	"github.com/jimschubert/ossify/util"
+	"github.com/jimschubert/ossify/internal/model"
+	"github.com/jimschubert/ossify/internal/util"
 )
 
 func Test_indexOf(t *testing.T) {
@@ -113,7 +113,7 @@ func TestRule_UnmarshalJSON(t *testing.T) {
 	}
 }
 
-//func TestLoad(t *testing.T) {
+// func TestLoad(t *testing.T) {
 //	tests := []struct {
 //		name    string
 //		want    *[]Convention
@@ -133,9 +133,9 @@ func TestRule_UnmarshalJSON(t *testing.T) {
 //			}
 //		})
 //	}
-//}
+// }
 //
-//func TestConvention_Evaluate(t *testing.T) {
+// func TestConvention_Evaluate(t *testing.T) {
 //	type fields struct {
 //		Name  string
 //		Rules []Rule
@@ -158,4 +158,4 @@ func TestRule_UnmarshalJSON(t *testing.T) {
 //			}
 //		})
 //	}
-//}
+// }

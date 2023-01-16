@@ -6,8 +6,8 @@ import (
 	"os"
 	"path"
 
-	"github.com/jimschubert/ossify/config"
-	"github.com/jimschubert/ossify/model"
+	"github.com/jimschubert/ossify/internal/config"
+	"github.com/jimschubert/ossify/internal/model"
 )
 
 func Load() (*[]model.Convention, error) {

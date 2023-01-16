@@ -6,10 +6,9 @@ import (
 	"os"
 	"path"
 
+	"github.com/jimschubert/ossify/internal/config"
+	"github.com/jimschubert/ossify/internal/licenses"
 	"github.com/spf13/cobra"
-
-	"github.com/jimschubert/ossify/config"
-	"github.com/jimschubert/ossify/config/licenses"
 )
 
 var licenseFlags *LicenseFlags

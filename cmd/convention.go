@@ -1,9 +1,8 @@
 package cmd
 
 import (
+	"github.com/jimschubert/ossify/internal/config/conventions"
 	"github.com/spf13/cobra"
-
-	"github.com/jimschubert/ossify/config/conventions"
 )
 
 var conventionFlags *ConventionFlags

@@ -112,4 +112,4 @@ Links
 
 This project is [Licensed MIT](./LICENSE)
 
-All included license text is [Licensed CC0 1.0 Universal](./data/licenses/LICENSE.CC0)
+All included license text is [Licensed CC0 1.0 Universal](internal/license/data/LICENSE.CC0)

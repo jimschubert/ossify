@@ -1,21 +1,22 @@
 package licenses
 
 import (
+	"embed"
+	_ "embed"
 	"encoding/json"
 	"fmt"
 	"os"
 	"path"
 
-	"github.com/gobuffalo/packr"
-
-	"github.com/jimschubert/ossify/model"
+	"github.com/jimschubert/ossify/internal/model"
 )
 
+//go:embed data
+var licenseContent embed.FS
+
 func Load() (*model.Licenses, error) {
-	// should this be configurable?
-	box := packr.NewBox("../../data/licenses")
 	var licenses *model.Licenses
-	bytes, err := box.Find("licenses.json")
+	bytes, err := licenseContent.ReadFile("data/licenses.json")
 	if err != nil {
 		return nil, err
 	}
@@ -24,15 +25,13 @@ func Load() (*model.Licenses, error) {
 }
 
 func PrintLicenseText(id string, customTemplateLocation string) error {
-	// should this be configurable?
-	box := packr.NewBox("../../data/licenses")
-	location := path.Join("texts/plain/", id)
+	location := path.Join("data/texts/plain/", id)
 	customLocation := path.Join(customTemplateLocation, id)
 
 	var b []byte
 	// user-defined license templates take precedence over built-ins.
 	if _, customErr := os.Stat(customLocation); os.IsNotExist(customErr) {
-		embeddedContent, err := box.Find(location)
+		embeddedContent, err := licenseContent.ReadFile(location)
 		if err != nil {
 			return err
 		}

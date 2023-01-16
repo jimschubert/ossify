@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/jimschubert/ossify/util"
+	"github.com/jimschubert/ossify/internal/util"
 )
 
 type StrictnessLevel int

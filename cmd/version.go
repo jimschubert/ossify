@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/jimschubert/ossify/internal/config"
 	"github.com/spf13/cobra"
-
-	"github.com/jimschubert/ossify/config"
 )
 
 func init() {
