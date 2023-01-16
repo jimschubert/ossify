@@ -3,7 +3,6 @@ package licenses
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path"
 
@@ -39,7 +38,7 @@ func PrintLicenseText(id string, customTemplateLocation string) error {
 		}
 		b = embeddedContent
 	} else {
-		customContent, err := ioutil.ReadFile(customLocation)
+		customContent, err := os.ReadFile(customLocation)
 		if err != nil {
 			return err
 		}

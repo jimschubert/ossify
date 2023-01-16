@@ -3,7 +3,6 @@ package conventions
 import (
 	"encoding/json"
 	"errors"
-	"io/ioutil"
 	"os"
 	"path"
 
@@ -25,7 +24,7 @@ func Load() (*[]model.Convention, error) {
 	copy(conventions, DefaultConventions)
 
 	if _, err := os.Stat(conventionPath); os.IsExist(err) {
-		var files, err = ioutil.ReadDir(conventionPath)
+		var files, err = os.ReadDir(conventionPath)
 		if err != nil {
 			return nil, err
 		}
@@ -35,7 +34,7 @@ func Load() (*[]model.Convention, error) {
 				var convention model.Convention
 
 				var bytes []byte
-				bytes, err = ioutil.ReadFile(path.Join(conventionPath, file.Name()))
+				bytes, err = os.ReadFile(path.Join(conventionPath, file.Name()))
 				if err != nil {
 					continue
 				}
@@ -87,10 +86,10 @@ var GoConvention = model.Convention{
 	},
 }
 
-//{
+// {
 //	"name": "Standard",
 //  "rules" : [
 //		{ "level": "optional", "type": "directory", "value": "src" },
 //		{ "level": "required", "type": "file", "value": "CONTRIBUTING.md" }
 //    ]
-//}
+// }

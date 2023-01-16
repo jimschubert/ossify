@@ -3,7 +3,6 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"path"
@@ -137,7 +136,7 @@ var addLicenseCmd = &cobra.Command{
 			failOnError(err)
 		}
 
-		data, _ := ioutil.ReadFile(licenseFlags.licenseTemplate)
+		data, _ := os.ReadFile(licenseFlags.licenseTemplate)
 
 		err = os.MkdirAll(licensePath, 0700)
 		failOnError(err)
@@ -145,7 +144,7 @@ var addLicenseCmd = &cobra.Command{
 		targetFile := path.Join(licensePath, licenseFlags.licenseId)
 
 		// TODO: Document how this allows users to specify default text for a license
-		err = ioutil.WriteFile(targetFile, data, 0644)
+		err = os.WriteFile(targetFile, data, 0644)
 		failOnError(err)
 
 		log.Println(fmt.Sprintf("Saved license with id %s to %s", licenseFlags.licenseId, targetFile))
