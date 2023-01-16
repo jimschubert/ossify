@@ -2,7 +2,6 @@ package config
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -21,7 +20,7 @@ var Date = "n/a"
 
 var configName = ".config/ossify/settings.json"
 
-//noinspection GoNameStartsWithPackageName
+// noinspection GoNameStartsWithPackageName
 var ConfigManager *Manager
 
 type LoadConfig func() (*Config, error)
@@ -56,7 +55,7 @@ func loadConfig() (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
-	content, err := ioutil.ReadFile(fullPath)
+	content, err := os.ReadFile(fullPath)
 	if os.IsNotExist(err) {
 		c = defaultConfig
 		if err := saveConfig(&c); err != nil {
@@ -84,7 +83,7 @@ func saveConfig(config *Config) error {
 		return err
 	}
 
-	return ioutil.WriteFile(fullPath, content, 0600)
+	return os.WriteFile(fullPath, content, 0600)
 }
 
 func init() {

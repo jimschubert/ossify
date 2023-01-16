@@ -2,8 +2,9 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
 	"os"
+
+	"github.com/spf13/cobra"
 )
 
 var version bool
@@ -24,7 +25,7 @@ var rootCmd = &cobra.Command{
 	},
 }
 
-func failOnError(err error){
+func failOnError(err error) {
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -38,6 +39,6 @@ func Execute() {
 	}
 }
 
-func init(){
+func init() {
 	rootCmd.Flags().BoolVarP(&version, "version", "v", false, "version for ossify")
 }

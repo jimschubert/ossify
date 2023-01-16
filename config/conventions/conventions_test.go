@@ -1,10 +1,11 @@
 package conventions
 
 import (
-	"github.com/jimschubert/ossify/model"
-	"github.com/jimschubert/ossify/util"
 	"reflect"
 	"testing"
+
+	"github.com/jimschubert/ossify/model"
+	"github.com/jimschubert/ossify/util"
 )
 
 func Test_indexOf(t *testing.T) {
