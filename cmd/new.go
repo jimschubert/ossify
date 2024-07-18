@@ -4,57 +4,59 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var newFlags *NewFlags
-
-type NewFlags struct {
+type CreateFlags struct {
 	out string
 }
 
-func init() {
-	newFlags = &NewFlags{}
-	rootCmd.AddCommand(newCmd)
+func newCreateCmd() *cobra.Command {
+	createFlags := &CreateFlags{}
+	createCommand := &cobra.Command{
+		Use:   "create",
+		Short: "Create a new open-source project or other resource",
+		Run: func(cmd *cobra.Command, args []string) {
+			// TODO
+		},
+	}
 
-	newCmd.PersistentFlags().StringVarP(&newFlags.out, "out", "o", "",
+	licenseCmd := &cobra.Command{
+		Use:   "license",
+		Short: "Create or evaluate a new license for your repository.",
+		Run: func(cmd *cobra.Command, args []string) {
+			// TODO
+		},
+	}
+
+	projectCmd := &cobra.Command{
+		Use:   "project",
+		Short: "Create a new project.",
+		Run: func(cmd *cobra.Command, args []string) {
+			// TODO
+		},
+	}
+
+	repositoryCmd := &cobra.Command{
+		Use:   "repository",
+		Short: "Create a new remote repository.",
+		Run: func(cmd *cobra.Command, args []string) {
+			// TODO
+		},
+	}
+
+	createCommand.PersistentFlags().StringVarP(&createFlags.out, "out", "o", "",
 		"Create a new open-source project or other resource in `dir`.")
 
 	// new license
-	newCmd.AddCommand(newLicenseCmd)
+	createCommand.AddCommand(licenseCmd)
 
 	// new project
-	newCmd.AddCommand(newProjectCmd)
+	createCommand.AddCommand(projectCmd)
 
 	// new repository
-	newCmd.AddCommand(newRepositoryCmd)
+	createCommand.AddCommand(repositoryCmd)
+
+	return createCommand
 }
 
-var newCmd = &cobra.Command{
-	Use:   "new",
-	Short: "Create a new open-source project or other resource",
-	Run: func(cmd *cobra.Command, args []string) {
-		// TODO
-	},
-}
-
-var newLicenseCmd = &cobra.Command{
-	Use:   "license",
-	Short: "Create or evaluate a new license for your repository.",
-	Run: func(cmd *cobra.Command, args []string) {
-		// TODO
-	},
-}
-
-var newProjectCmd = &cobra.Command{
-	Use:   "project",
-	Short: "Create a new project.",
-	Run: func(cmd *cobra.Command, args []string) {
-		// TODO
-	},
-}
-
-var newRepositoryCmd = &cobra.Command{
-	Use:   "repository",
-	Short: "Create a new remote repository.",
-	Run: func(cmd *cobra.Command, args []string) {
-		// TODO
-	},
+func init() {
+	rootCmd.AddCommand(newCreateCmd())
 }

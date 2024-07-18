@@ -97,7 +97,7 @@ func (l Licenses) FindByKeyword(keyword string) *Licenses {
 	return &licenses
 }
 
-// enable a loose free-form textual search
+// Search enables a loose free-form textual search
 func (l Licenses) Search(term string) *Licenses {
 	var licenses Licenses
 SearchLoop:
@@ -137,6 +137,8 @@ SearchLoop:
 				}
 			}
 		}
+
+		// TODO: search license contents
 	}
 	return &licenses
 }

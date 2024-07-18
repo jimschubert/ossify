@@ -11,8 +11,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var licenseFlags *LicenseFlags
-
 type LicenseFlags struct {
 	licenseId       string
 	licenseTemplate string
@@ -21,11 +19,121 @@ type LicenseFlags struct {
 	details         bool
 }
 
-func init() {
-	licenseFlags = &LicenseFlags{}
-	rootCmd.AddCommand(licenseCmd)
+func newLicenseCmd() *cobra.Command {
+	licenseFlags := &LicenseFlags{}
+	licenseCmd := &cobra.Command{
+		Use:   "license",
+		Short: "Manage open-source licenses",
+		Run: func(cmd *cobra.Command, args []string) {
+			conf, err := config.ConfigManager.Load()
+			failOnError(err)
 
-	// license
+			// TODO: define _where_ local configuration will be held (e.g. ~/.config/ossify), used by this and Add
+			//		 then, pull from OSI list, and merge our local licenses on top of that.
+
+			allLicenses, err := licenses.Load()
+			failOnError(err)
+
+			id := licenseFlags.licenseId
+			keywords := licenseFlags.keyword
+			search := licenseFlags.search
+			// consider an --all option
+
+			if len(id) == 0 && len(keywords) == 0 && len(search) == 0 {
+				if len(args) == 1 {
+					id = args[0]
+				} else {
+					keywords = append(keywords, "popular")
+				}
+			}
+
+			if len(id) > 0 {
+				license := allLicenses.FindById(id)
+				details := licenseFlags.details
+				if license != nil {
+					if details {
+						_ = license.PrintDetails()
+					} else {
+						err := licenses.PrintLicenseText(license.Id, conf.LicensePath)
+						failOnError(err)
+					}
+				}
+			} else if len(keywords) > 0 {
+				for _, keyword := range keywords {
+					keywordLicenses := allLicenses.FindByKeyword(keyword)
+					for _, byKeyword := range *keywordLicenses {
+						_ = byKeyword.Print()
+					}
+				}
+			} else if len(search) > 0 {
+				searchResults := allLicenses.Search(search)
+				for _, result := range *searchResults {
+					_ = result.Print()
+				}
+			}
+		},
+	}
+
+	addLicenseCmd := &cobra.Command{
+		Use:   "add",
+		Short: "Adds a new custom license (local-only) to the list of known licenses.",
+		Args:  cobra.MinimumNArgs(1),
+		Run: func(cmd *cobra.Command, args []string) {
+
+			config, err := config.ConfigManager.Load()
+			failOnError(err)
+
+			licensePath := config.LicensePath
+			if licensePath == "" {
+				err = errors.New("invalid license path: please update your configuration and try again")
+				failOnError(err)
+			}
+
+			err = os.MkdirAll(licensePath, 0700)
+			failOnError(err)
+
+			if licenseFlags.licenseTemplate == "" {
+				licenseFlags.licenseTemplate = args[0]
+
+				if licenseFlags.licenseTemplate == "" {
+					err = errors.New("invalid template: you must provide a template value")
+					failOnError(err)
+				}
+			}
+
+			if licenseFlags.licenseId == "" {
+				err = errors.New("invalid id: you must provide a id value")
+				failOnError(err)
+			}
+
+			data, _ := os.ReadFile(licenseFlags.licenseTemplate)
+
+			err = os.MkdirAll(licensePath, 0700)
+			failOnError(err)
+
+			targetFile := path.Join(licensePath, licenseFlags.licenseId)
+
+			// TODO: Document how this allows users to specify default text for a license
+			err = os.WriteFile(targetFile, data, 0644)
+			failOnError(err)
+
+			log.Printf("Saved license with id %s to %s", licenseFlags.licenseId, targetFile)
+		},
+	}
+
+	listLicenseCmd := &cobra.Command{
+		Use:   "list",
+		Short: "Presents a list of known licenses.",
+		Run: func(cmd *cobra.Command, args []string) {
+			licenses, err := licenses.Load()
+			failOnError(err)
+
+			for _, license := range *licenses {
+				err = license.Print()
+				failOnError(err)
+			}
+		},
+	}
 	licenseCmd.AddCommand(listLicenseCmd)
 	licenseCmd.AddCommand(addLicenseCmd)
 
@@ -46,119 +154,9 @@ func init() {
 	addLicenseCmd.Flags().StringVarP(&licenseFlags.licenseTemplate, "template", "t", "",
 		"The template to add for the given identifier.")
 
-	// license list
+	return licenseCmd
 }
 
-var licenseCmd = &cobra.Command{
-	Use:   "license",
-	Short: "Manage open-source licenses",
-	Run: func(cmd *cobra.Command, args []string) {
-		conf, err := config.ConfigManager.Load()
-		failOnError(err)
-
-		// TODO: define _where_ local configuration will be held (e.g. ~/.config/ossify), used by this and Add
-		//		 then, pull from OSI list, and merge our local licenses on top of that.
-
-		allLicenses, err := licenses.Load()
-		failOnError(err)
-
-		id := licenseFlags.licenseId
-		keywords := licenseFlags.keyword
-		search := licenseFlags.search
-		// consider an --all option
-
-		if len(id) == 0 && len(keywords) == 0 && len(search) == 0 {
-			if len(args) == 1 {
-				id = args[0]
-			} else {
-				keywords = append(keywords, "popular")
-			}
-		}
-
-		if len(id) > 0 {
-			license := allLicenses.FindById(id)
-			details := licenseFlags.details
-			if license != nil {
-				if details {
-					_ = license.PrintDetails()
-				} else {
-					err := licenses.PrintLicenseText(license.Id, conf.LicensePath)
-					failOnError(err)
-				}
-			}
-		} else if len(keywords) > 0 {
-			for _, keyword := range keywords {
-				keywordLicenses := allLicenses.FindByKeyword(keyword)
-				for _, byKeyword := range *keywordLicenses {
-					_ = byKeyword.Print()
-				}
-			}
-		} else if len(search) > 0 {
-			searchResults := allLicenses.Search(search)
-			for _, result := range *searchResults {
-				_ = result.Print()
-			}
-		}
-	},
-}
-
-var addLicenseCmd = &cobra.Command{
-	Use:   "add",
-	Short: "Adds a new custom license (local-only) to the list of known licenses.",
-	Args:  cobra.MinimumNArgs(1),
-	Run: func(cmd *cobra.Command, args []string) {
-
-		config, err := config.ConfigManager.Load()
-		failOnError(err)
-
-		licensePath := config.LicensePath
-		if licensePath == "" {
-			err = errors.New("invalid license path: please update your configuration and try again")
-			failOnError(err)
-		}
-
-		err = os.MkdirAll(licensePath, 0700)
-		failOnError(err)
-
-		if licenseFlags.licenseTemplate == "" {
-			licenseFlags.licenseTemplate = args[0]
-
-			if licenseFlags.licenseTemplate == "" {
-				err = errors.New("invalid template: you must provide a template value")
-				failOnError(err)
-			}
-		}
-
-		if licenseFlags.licenseId == "" {
-			err = errors.New("invalid id: you must provide a id value")
-			failOnError(err)
-		}
-
-		data, _ := os.ReadFile(licenseFlags.licenseTemplate)
-
-		err = os.MkdirAll(licensePath, 0700)
-		failOnError(err)
-
-		targetFile := path.Join(licensePath, licenseFlags.licenseId)
-
-		// TODO: Document how this allows users to specify default text for a license
-		err = os.WriteFile(targetFile, data, 0644)
-		failOnError(err)
-
-		log.Printf("Saved license with id %s to %s", licenseFlags.licenseId, targetFile)
-	},
-}
-
-var listLicenseCmd = &cobra.Command{
-	Use:   "list",
-	Short: "Presents a list of known licenses.",
-	Run: func(cmd *cobra.Command, args []string) {
-		licenses, err := licenses.Load()
-		failOnError(err)
-
-		for _, license := range *licenses {
-			err = license.Print()
-			failOnError(err)
-		}
-	},
+func init() {
+	rootCmd.AddCommand(newLicenseCmd())
 }

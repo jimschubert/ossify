@@ -3,9 +3,8 @@ package model
 import (
 	"encoding/json"
 	"fmt"
+	"slices"
 	"strings"
-
-	"github.com/jimschubert/ossify/internal/util"
 )
 
 type StrictnessLevel int
@@ -79,12 +78,12 @@ func (r *Rule) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	ruleType := util.StringSearch(ruleTypeNames, other.Type)
+	ruleType := slices.Index(ruleTypeNames, other.Type)
 	if ruleType == -1 {
 		return fmt.Errorf("type %s is not valid", other.Type)
 	}
 
-	level := util.StringSearch(strictnessLevelNames, other.Level)
+	level := slices.Index(strictnessLevelNames, other.Level)
 	if level == -1 {
 		return fmt.Errorf("level %s is not valid", other.Level)
 	}

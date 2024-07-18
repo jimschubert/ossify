@@ -2,10 +2,10 @@ package conventions
 
 import (
 	"reflect"
+	"slices"
 	"testing"
 
 	"github.com/jimschubert/ossify/internal/model"
-	"github.com/jimschubert/ossify/internal/util"
 )
 
 func Test_indexOf(t *testing.T) {
@@ -25,7 +25,7 @@ func Test_indexOf(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := util.StringSearch(tt.args.data, tt.args.search); got != tt.want {
+			if got := slices.Index(tt.args.data, tt.args.search); got != tt.want {
 				t.Errorf("indexOf() = %v, want %v", got, tt.want)
 			}
 		})
