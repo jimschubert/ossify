@@ -19,6 +19,7 @@ type LicenseFlags struct {
 	details         bool
 }
 
+//nolint:funlen,gocognit
 func newLicenseCmd() *cobra.Command {
 	licenseFlags := &LicenseFlags{}
 	licenseCmd := &cobra.Command{
@@ -47,7 +48,8 @@ func newLicenseCmd() *cobra.Command {
 				}
 			}
 
-			if len(id) > 0 {
+			switch {
+			case len(id) > 0:
 				license := allLicenses.FindById(id)
 				details := licenseFlags.details
 				if license != nil {
@@ -58,14 +60,14 @@ func newLicenseCmd() *cobra.Command {
 						failOnError(err)
 					}
 				}
-			} else if len(keywords) > 0 {
+			case len(keywords) > 0:
 				for _, keyword := range keywords {
 					keywordLicenses := allLicenses.FindByKeyword(keyword)
 					for _, byKeyword := range *keywordLicenses {
 						_ = byKeyword.Print()
 					}
 				}
-			} else if len(search) > 0 {
+			case len(search) > 0:
 				searchResults := allLicenses.Search(search)
 				for _, result := range *searchResults {
 					_ = result.Print()
@@ -80,10 +82,10 @@ func newLicenseCmd() *cobra.Command {
 		Args:  cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 
-			config, err := config.ConfigManager.Load()
+			c, err := config.ConfigManager.Load()
 			failOnError(err)
 
-			licensePath := config.LicensePath
+			licensePath := c.LicensePath
 			if licensePath == "" {
 				err = errors.New("invalid license path: please update your configuration and try again")
 				failOnError(err)
@@ -114,7 +116,7 @@ func newLicenseCmd() *cobra.Command {
 			targetFile := path.Join(licensePath, licenseFlags.licenseId)
 
 			// TODO: Document how this allows users to specify default text for a license
-			err = os.WriteFile(targetFile, data, 0644)
+			err = os.WriteFile(targetFile, data, 0600)
 			failOnError(err)
 
 			log.Printf("Saved license with id %s to %s", licenseFlags.licenseId, targetFile)

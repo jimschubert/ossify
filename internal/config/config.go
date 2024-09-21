@@ -87,6 +87,7 @@ func saveConfig(config *Config) error {
 }
 
 func init() {
+	// TODO: make this configurable and cross-platform
 	licensePath, err := fullConfigPath(".config/ossify/licenses")
 	if err != nil {
 		log.Fatal("Failed to create configuration path(s).")

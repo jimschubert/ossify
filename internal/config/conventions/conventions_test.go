@@ -1,6 +1,7 @@
 package conventions
 
 import (
+	"encoding/json"
 	"reflect"
 	"slices"
 	"testing"
@@ -57,7 +58,7 @@ func TestRule_MarshalJSON(t *testing.T) {
 				Value: tt.fields.Value,
 			}
 			got, err := r.MarshalJSON()
-			actual := string(got[:])
+			actual := string(got)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Rule.MarshalJSON() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -98,7 +99,7 @@ func TestRule_UnmarshalJSON(t *testing.T) {
 				Value: tt.fields.Value,
 			}
 			unMarshaled := &model.Rule{}
-			err := unMarshaled.UnmarshalJSON(tt.args.data)
+			err := json.Unmarshal(tt.args.data, unMarshaled)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Rule.UnmarshalJSON() error = %v, wantErr %v", err, tt.wantErr)
 				return
