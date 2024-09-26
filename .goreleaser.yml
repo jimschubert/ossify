@@ -1,7 +1,6 @@
 # Make sure to check the documentation at http://goreleaser.com
-before:
-  hooks:
-    - go mod tidy
+# goreleaser release --clean --snapshot --skip publish
+version: 2
 builds:
   - env:
       - CGO_ENABLED=0
@@ -15,6 +14,7 @@ builds:
       - windows
     goarch:
       - amd64
+      - arm64
       - 386
 archives:
   - name_template: '{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
@@ -23,7 +23,6 @@ archives:
       - goos: windows
         format: zip
 
-    rlcp: true
     wrap_in_directory: '{{ .ProjectName }}-{{.Version}}'
 
     files:
