@@ -23,7 +23,7 @@ func Load() (*[]model.Convention, error) {
 	var conventions = make([]model.Convention, 2)
 	copy(conventions, DefaultConventions)
 
-	if _, err := os.Stat(conventionPath); os.IsExist(err) {
+	if _, err := os.Stat(conventionPath); err == nil {
 		var files, err = os.ReadDir(conventionPath)
 		if err != nil {
 			return nil, err
