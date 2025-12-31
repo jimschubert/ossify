@@ -40,23 +40,6 @@ func setupTestDirectory(t *testing.T, structure map[string]bool) string {
 	return tempDir
 }
 
-// captureOutput captures stdout during function execution
-func captureOutput(t *testing.T, f func()) string {
-	t.Helper()
-	old := os.Stdout
-	r, w, _ := os.Pipe()
-	os.Stdout = w
-
-	f()
-
-	w.Close()
-	os.Stdout = old
-
-	var buf bytes.Buffer
-	buf.ReadFrom(r)
-	return buf.String()
-}
-
 func TestCheckCmd_Help(t *testing.T) {
 	// Test that the help flag works
 	cmd := rootCmd
@@ -151,12 +134,14 @@ func TestLoadConventionFromFile(t *testing.T) {
 			if err != nil {
 				t.Fatalf("failed to create temp file: %v", err)
 			}
-			defer os.Remove(tempFile.Name())
+			defer func() { _ = os.Remove(tempFile.Name()) }()
 
 			if _, err := tempFile.WriteString(tt.content); err != nil {
 				t.Fatalf("failed to write content: %v", err)
 			}
-			tempFile.Close()
+			if err := tempFile.Close(); err != nil {
+				t.Fatalf("failed to close temp file: %v", err)
+			}
 
 			// Test loading
 			convention, err := loadConventionFromFile(tempFile.Name())
@@ -243,7 +228,7 @@ func TestCheckCmd_WithConventionFile(t *testing.T) {
 		"README.md": false,
 		"src":       true,
 	})
-	defer os.RemoveAll(testDir)
+	defer func() { _ = os.RemoveAll(testDir) }()
 
 	// Create a convention file
 	convention := model.Convention{
@@ -259,9 +244,13 @@ func TestCheckCmd_WithConventionFile(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to create convention file: %v", err)
 	}
-	defer os.Remove(convFile.Name())
-	convFile.Write(convData)
-	convFile.Close()
+	defer func() { _ = os.Remove(convFile.Name()) }()
+	if _, err := convFile.Write(convData); err != nil {
+		t.Fatalf("failed to write convention data: %v", err)
+	}
+	if err := convFile.Close(); err != nil {
+		t.Fatalf("failed to close convention file: %v", err)
+	}
 
 	// Reset flags before test
 	checkFlags = &CheckFlags{}
@@ -308,12 +297,15 @@ func TestCheckCmd_Integration(t *testing.T) {
 		"LICENSE":   false,
 		"docs":      true,
 	})
-	defer os.RemoveAll(testDir)
+	defer func() { _ = os.RemoveAll(testDir) }()
 
 	// Create convention file
-	convFile, _ := os.CreateTemp("", "conv-*.json")
-	defer os.Remove(convFile.Name())
-	convFile.WriteString(`{
+	convFile, err := os.CreateTemp("", "conv-*.json")
+	if err != nil {
+		t.Fatalf("failed to create convention file: %v", err)
+	}
+	defer func() { _ = os.Remove(convFile.Name()) }()
+	if _, err := convFile.WriteString(`{
 		"name": "Integration Test",
 		"rules": [
 			{"level": "required", "type": "file", "value": "README.md"},
@@ -321,8 +313,12 @@ func TestCheckCmd_Integration(t *testing.T) {
 			{"level": "required", "type": "directory", "value": "docs"},
 			{"level": "prohibited", "type": "directory", "value": "vendor"}
 		]
-	}`)
-	convFile.Close()
+	}`); err != nil {
+		t.Fatalf("failed to write convention: %v", err)
+	}
+	if err := convFile.Close(); err != nil {
+		t.Fatalf("failed to close convention file: %v", err)
+	}
 
 	// Load and evaluate
 	conv, err := loadConventionFromFile(convFile.Name())

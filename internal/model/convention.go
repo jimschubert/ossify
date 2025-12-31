@@ -122,13 +122,13 @@ type RuleResult struct {
 
 // CheckResult represents the overall result of checking a convention against a directory
 type CheckResult struct {
-	Convention  string
-	Directory   string
-	Results     []RuleResult
-	PassCount   int
-	FailCount   int
-	WarnCount   int
-	SkipCount   int
+	Convention string
+	Directory  string
+	Results    []RuleResult
+	PassCount  int
+	FailCount  int
+	WarnCount  int
+	SkipCount  int
 }
 
 // HasFailures returns true if any required rules failed or prohibited items exist
@@ -204,25 +204,27 @@ func evaluateRule(rule Rule, targetDir string) RuleResult {
 	case Directory:
 		if exists && info.IsDir() {
 			// Directory exists
-			if rule.Level == Prohibited {
+			switch rule.Level {
+			case Prohibited:
 				result.Passed = false
 				result.Message = "prohibited directory exists"
-			} else {
+			default:
 				result.Passed = true
 				result.Message = "found"
 			}
 		} else {
 			// Directory does not exist
-			if rule.Level == Prohibited {
+			switch rule.Level {
+			case Prohibited:
 				result.Passed = true
 				result.Message = "not present (good)"
-			} else if rule.Level == Required {
+			case Required:
 				result.Passed = false
 				result.Message = "missing"
-			} else if rule.Level == Preferred {
+			case Preferred:
 				result.Passed = false
 				result.Message = "recommended but missing"
-			} else {
+			default:
 				result.Passed = true
 				result.Message = "not present (optional)"
 			}
@@ -231,25 +233,27 @@ func evaluateRule(rule Rule, targetDir string) RuleResult {
 	case File:
 		if exists && !info.IsDir() {
 			// File exists
-			if rule.Level == Prohibited {
+			switch rule.Level {
+			case Prohibited:
 				result.Passed = false
 				result.Message = "prohibited file exists"
-			} else {
+			default:
 				result.Passed = true
 				result.Message = "found"
 			}
 		} else {
 			// File does not exist
-			if rule.Level == Prohibited {
+			switch rule.Level {
+			case Prohibited:
 				result.Passed = true
 				result.Message = "not present (good)"
-			} else if rule.Level == Required {
+			case Required:
 				result.Passed = false
 				result.Message = "missing"
-			} else if rule.Level == Preferred {
+			case Preferred:
 				result.Passed = false
 				result.Message = "recommended but missing"
-			} else {
+			default:
 				result.Passed = true
 				result.Message = "not present (optional)"
 			}
@@ -262,24 +266,26 @@ func evaluateRule(rule Rule, targetDir string) RuleResult {
 			result.Passed = false
 			result.Message = fmt.Sprintf("invalid pattern: %v", globErr)
 		} else if len(matches) > 0 {
-			if rule.Level == Prohibited {
+			switch rule.Level {
+			case Prohibited:
 				result.Passed = false
 				result.Message = fmt.Sprintf("prohibited pattern matched %d item(s)", len(matches))
-			} else {
+			default:
 				result.Passed = true
 				result.Message = fmt.Sprintf("matched %d item(s)", len(matches))
 			}
 		} else {
-			if rule.Level == Prohibited {
+			switch rule.Level {
+			case Prohibited:
 				result.Passed = true
 				result.Message = "no matches (good)"
-			} else if rule.Level == Required {
+			case Required:
 				result.Passed = false
 				result.Message = "no matches"
-			} else if rule.Level == Preferred {
+			case Preferred:
 				result.Passed = false
 				result.Message = "recommended but no matches"
-			} else {
+			default:
 				result.Passed = true
 				result.Message = "no matches (optional)"
 			}

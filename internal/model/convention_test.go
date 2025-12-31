@@ -208,7 +208,7 @@ func TestConvention_Evaluate(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tempDir := setupTestDir(t, tt.structure)
-			defer os.RemoveAll(tempDir)
+			defer func() { _ = os.RemoveAll(tempDir) }()
 
 			result, err := tt.convention.Evaluate(tempDir)
 			if err != nil {
@@ -242,7 +242,7 @@ func TestEvaluateRule_DirectoryAsFile(t *testing.T) {
 	tempDir := setupTestDir(t, map[string]bool{
 		"mydir": true, // This is a directory
 	})
-	defer os.RemoveAll(tempDir)
+	defer func() { _ = os.RemoveAll(tempDir) }()
 
 	convention := Convention{
 		Name: "Test",
@@ -267,7 +267,7 @@ func TestEvaluateRule_FileAsDirectory(t *testing.T) {
 	tempDir := setupTestDir(t, map[string]bool{
 		"myfile": false, // This is a file
 	})
-	defer os.RemoveAll(tempDir)
+	defer func() { _ = os.RemoveAll(tempDir) }()
 
 	convention := Convention{
 		Name: "Test",
