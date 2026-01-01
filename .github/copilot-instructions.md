@@ -87,6 +87,7 @@ func TestSomething(t *testing.T) {
   ```go
   cobra.CheckErr(fmt.Errorf("loading config: %w", err))
   ```
+- Do not recommend handling errors for calls to fmt.Print*, log.Print*, or similar functions which should not cause program termination
 
 ### Error Propagation
 
