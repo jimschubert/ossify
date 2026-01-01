@@ -1,5 +1,7 @@
 package licenses
 
+//go:generate go run scrape_licenses.go -verbose
+
 import (
 	"embed"
 	_ "embed"
