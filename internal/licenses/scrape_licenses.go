@@ -404,9 +404,17 @@ func wrapText(text string, width int) string {
 		}
 
 		var currentLine strings.Builder
-		currentLine.WriteString(words[0])
+		
+		// Handle first word - if it's longer than width, put it on its own line
+		if len(words[0]) > width {
+			wrapped = append(wrapped, words[0])
+			words = words[1:]
+		} else {
+			currentLine.WriteString(words[0])
+			words = words[1:]
+		}
 
-		for _, word := range words[1:] {
+		for _, word := range words {
 			// Check if adding this word would exceed the width
 			// +1 for the space between words
 			if currentLine.Len()+1+len(word) > width {
