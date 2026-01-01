@@ -14,6 +14,7 @@ import (
 
 var checkFlags *CheckFlags
 
+// CheckFlags holds the flag values for the check command
 type CheckFlags struct {
 	conventionID   string
 	conventionFile string
@@ -71,9 +72,7 @@ Exit codes:
 		}
 
 		if optionsCount > 1 {
-			fmt.Println("error: --file, --convention (or convention name argument), and --all are mutually exclusive")
-			fmt.Println("please specify only one way to select conventions")
-			os.Exit(1)
+			cobra.CheckErr(fmt.Errorf("--file, --convention (or convention name argument), and --all are mutually exclusive"))
 		}
 
 		// Determine the target directory
@@ -85,19 +84,16 @@ Exit codes:
 		// Convert to absolute path
 		absDir, err := filepath.Abs(targetDir)
 		if err != nil {
-			fmt.Printf("error resolving directory path: %v\n", err)
-			os.Exit(1)
+			cobra.CheckErr(fmt.Errorf("resolving directory path: %w", err))
 		}
 
 		// Verify directory exists
 		info, err := os.Stat(absDir)
 		if err != nil {
-			fmt.Printf("error accessing directory: %v\n", err)
-			os.Exit(1)
+			cobra.CheckErr(fmt.Errorf("accessing directory: %w", err))
 		}
 		if !info.IsDir() {
-			fmt.Printf("'%s' is not a directory\n", absDir)
-			os.Exit(1)
+			cobra.CheckErr(fmt.Errorf("'%s' is not a directory", absDir))
 		}
 
 		// Collect conventions to check
@@ -107,8 +103,7 @@ Exit codes:
 		if checkFlags.conventionFile != "" {
 			convention, err := loadConventionFromFile(checkFlags.conventionFile)
 			if err != nil {
-				fmt.Printf("error loading convention file: %v\n", err)
-				os.Exit(1)
+				cobra.CheckErr(fmt.Errorf("loading convention file: %w", err))
 			}
 			conventionsToCheck = append(conventionsToCheck, *convention)
 		}
@@ -117,8 +112,7 @@ Exit codes:
 		if conventionID != "" {
 			allConventions, err := conventions.Load()
 			if err != nil {
-				fmt.Printf("error loading conventions: %v\n", err)
-				os.Exit(1)
+				cobra.CheckErr(fmt.Errorf("loading conventions: %w", err))
 			}
 
 			convention := findConventionByName(*allConventions, conventionID)
@@ -137,8 +131,7 @@ Exit codes:
 		if checkFlags.all {
 			allConventions, err := conventions.Load()
 			if err != nil {
-				fmt.Printf("error loading conventions: %v\n", err)
-				os.Exit(1)
+				cobra.CheckErr(fmt.Errorf("loading conventions: %w", err))
 			}
 			conventionsToCheck = *allConventions
 		}
@@ -155,13 +148,12 @@ Exit codes:
 		hasFailures := false
 		for i, convention := range conventionsToCheck {
 			if i > 0 {
-				fmt.Println("\n" + strings.Repeat("-", 60) + "\n")
+				fmt.Println("\n" + strings.Repeat("-", separatorWidth) + "\n")
 			}
 
 			result, err := convention.Evaluate(absDir)
 			if err != nil {
-				fmt.Printf("error evaluating convention '%s': %v\n", convention.Name, err)
-				continue
+				cobra.CheckErr(fmt.Errorf("evaluating convention '%s': %w", convention.Name, err))
 			}
 
 			result.Print()
@@ -177,6 +169,10 @@ Exit codes:
 	},
 }
 
+const separatorWidth = 60
+
+// loadConventionFromFile loads and validates a convention from a JSON file.
+// If the convention has no name, the filename is used as the name.
 func loadConventionFromFile(filePath string) (*model.Convention, error) {
 	data, err := os.ReadFile(filePath)
 	if err != nil {
@@ -199,6 +195,8 @@ func loadConventionFromFile(filePath string) (*model.Convention, error) {
 	return &convention, nil
 }
 
+// findConventionByName searches for a convention by name (case-insensitive).
+// Returns nil if no matching convention is found.
 func findConventionByName(conventions []model.Convention, name string) *model.Convention {
 	nameLower := strings.ToLower(name)
 	for _, c := range conventions {
