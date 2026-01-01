@@ -410,19 +410,20 @@ func wrapText(text string, width int) string {
 			// Check if adding this word would exceed the width
 			// +1 for the space between words
 			if currentLine.Len()+1+len(word) > width {
-				// If the word itself is longer than width, we have to split it awkwardly
-				// But first, flush the current line
+				// Flush the current line if it has content
 				if currentLine.Len() > 0 {
 					wrapped = append(wrapped, currentLine.String())
 					currentLine.Reset()
 				}
 
-				// If word is longer than width, add it on its own line
+				// If word is longer than width, add it on its own line and continue
 				if len(word) > width {
 					wrapped = append(wrapped, word)
-				} else {
-					currentLine.WriteString(word)
+					continue
 				}
+				
+				// Start new line with this word
+				currentLine.WriteString(word)
 			} else {
 				// Add space and word to current line
 				currentLine.WriteString(" ")
