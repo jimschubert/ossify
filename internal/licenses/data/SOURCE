@@ -1,2 +1,2 @@
 https://github.com/OpenSourceOrg/licenses
-https://api.opensource.org.s3.amazonaws.com/licenses/licenses.json
+https://s3.amazonaws.com/api.opensource.org/licenses/licenses.json

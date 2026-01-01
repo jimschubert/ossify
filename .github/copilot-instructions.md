@@ -20,6 +20,7 @@ ossify is a CLI tool written in Go that helps apply conventions and structure to
 - Use `gofmt` and `golangci-lint` for formatting and linting
 - Prefer explicit code over implicit logic
 - Always handle errors explicitly; do not use `_` to ignore errors except in deferred cleanup functions
+- Always run `go mod tidy` after making changes to `go.mod` and `go.sum`
 
 ### Testing
 
