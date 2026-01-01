@@ -416,8 +416,13 @@ func wrapText(text string, width int) string {
 
 		for _, word := range words {
 			// Check if adding this word would exceed the width
-			// +1 for the space between words
-			if currentLine.Len()+1+len(word) > width {
+			// Account for space separator only if currentLine has content
+			spaceNeeded := 0
+			if currentLine.Len() > 0 {
+				spaceNeeded = 1
+			}
+			
+			if currentLine.Len()+spaceNeeded+len(word) > width {
 				// Flush the current line if it has content
 				if currentLine.Len() > 0 {
 					wrapped = append(wrapped, currentLine.String())
@@ -433,8 +438,10 @@ func wrapText(text string, width int) string {
 				// Start new line with this word
 				currentLine.WriteString(word)
 			} else {
-				// Add space and word to current line
-				currentLine.WriteString(" ")
+				// Add space and word to current line (space only if line not empty)
+				if currentLine.Len() > 0 {
+					currentLine.WriteString(" ")
+				}
 				currentLine.WriteString(word)
 			}
 		}
