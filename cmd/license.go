@@ -32,7 +32,10 @@ func init() {
 	licenseCmd.Flags().StringVarP(&licenseFlags.licenseId, "id", "i", "",
 		"Get details about a single license by ID.")
 	licenseCmd.Flags().StringSliceVar(&licenseFlags.keyword, "keyword", []string{},
-		"Keywords to filter remote licenses by\n\t(copyleft,discouraged,international,miscellaneous,\n\t non-reusable,obsolete,osi-approved,permissive,\n\t popular,redundant,retired,special-purpose)")
+		"Keywords to filter remote licenses by\n"+
+			"\t(copyleft,discouraged,international,miscellaneous,\n"+
+			"\t non-reusable,obsolete,osi-approved,permissive,\n"+
+			"\t popular,redundant,retired,special-purpose)")
 	licenseCmd.Flags().StringVar(&licenseFlags.search, "search", "",
 		"Search term to query across all known license metadata.")
 	licenseCmd.Flags().BoolVar(&licenseFlags.details, "details", false,

@@ -286,7 +286,7 @@ func TestLoad(t *testing.T) {
 			var tempDir string
 			if tt.setupDir != nil {
 				tempDir = setupTestConventionsDir(t, tt.setupDir)
-				defer os.RemoveAll(tempDir)
+				defer func() { _ = os.RemoveAll(tempDir) }()
 			} else {
 				// Create an empty temp dir for tests that need a valid path
 				var err error
@@ -294,7 +294,7 @@ func TestLoad(t *testing.T) {
 				if err != nil {
 					t.Fatalf("failed to create temp dir: %v", err)
 				}
-				defer os.RemoveAll(tempDir)
+				defer func() { _ = os.RemoveAll(tempDir) }()
 			}
 
 			restore := mockConfigManager(t, tt.configOverride(tempDir))

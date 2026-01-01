@@ -8,5 +8,5 @@ jobs:
     # TODO: go-build-goreleaser doesn't currently support my custom changlog. maybe I will add it later, or deal with the auto-generated changelog for now.
     uses: jimschubert/.workflows/.github/workflows/go-build-goreleaser.yml@main
     with:
-      golangci-lint: "v1.61"
+      golangci-lint: "v2.7.2"
     secrets: inherit
