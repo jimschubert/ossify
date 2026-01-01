@@ -398,6 +398,11 @@ func wrapText(text string, width int) string {
 
 		// Wrap long lines
 		words := strings.Fields(line)
+		if len(words) == 0 {
+			// Safety check: if somehow we get here with no words, keep the line as-is
+			wrapped = append(wrapped, line)
+			continue
+		}
 
 		var currentLine strings.Builder
 
