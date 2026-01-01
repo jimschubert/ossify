@@ -6,7 +6,6 @@ require (
 	github.com/fatih/color v1.18.0
 	github.com/lithammer/fuzzysearch v1.1.8
 	github.com/spf13/cobra v1.10.2
-	golang.org/x/net v0.6.0
 )
 
 require (
@@ -17,6 +16,3 @@ require (
 	golang.org/x/sys v0.39.0 // indirect
 	golang.org/x/text v0.32.0 // indirect
 )
-
-// see https://go.dev/wiki/Modules#how-can-i-track-tool-dependencies-for-a-module
-tool golang.org/x/net/html
