@@ -398,21 +398,16 @@ func wrapText(text string, width int) string {
 
 		// Wrap long lines
 		words := strings.Fields(line)
-		if len(words) == 0 {
-			wrapped = append(wrapped, "")
-			continue
-		}
 
 		var currentLine strings.Builder
-		
+
 		// Handle first word - if it's longer than width, put it on its own line
 		if len(words[0]) > width {
 			wrapped = append(wrapped, words[0])
-			words = words[1:]
 		} else {
 			currentLine.WriteString(words[0])
-			words = words[1:]
 		}
+		words = words[1:]
 
 		for _, word := range words {
 			// Check if adding this word would exceed the width
