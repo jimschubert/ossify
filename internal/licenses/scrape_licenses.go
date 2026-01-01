@@ -421,7 +421,7 @@ func wrapText(text string, width int) string {
 					wrapped = append(wrapped, word)
 					continue
 				}
-				
+
 				// Start new line with this word
 				currentLine.WriteString(word)
 			} else {
