@@ -373,6 +373,88 @@ func extractText(n *html.Node, builder *strings.Builder) {
 	}
 }
 
+// wrapText wraps text at the specified column width, preferring to break at word boundaries.
+// It preserves paragraph breaks (empty lines) and handles lines that are already shorter than the width.
+func wrapText(text string, width int) string {
+	if width <= 0 {
+		return text
+	}
+
+	lines := strings.Split(text, "\n")
+	var wrapped []string
+
+	for _, line := range lines {
+		// Preserve empty lines (paragraph breaks)
+		if strings.TrimSpace(line) == "" {
+			wrapped = append(wrapped, "")
+			continue
+		}
+
+		// If line is already short enough, keep it as-is
+		if len(line) <= width {
+			wrapped = append(wrapped, line)
+			continue
+		}
+
+		// Wrap long lines
+		words := strings.Fields(line)
+		if len(words) == 0 {
+			// Safety check: if somehow we get here with no words, keep the line as-is
+			wrapped = append(wrapped, line)
+			continue
+		}
+
+		var currentLine strings.Builder
+
+		// Handle first word - if it's longer than width, put it on its own line
+		if len(words[0]) > width {
+			wrapped = append(wrapped, words[0])
+		} else {
+			currentLine.WriteString(words[0])
+		}
+		words = words[1:]
+
+		for _, word := range words {
+			// Check if adding this word would exceed the width
+			// Account for space separator only if currentLine has content
+			spaceNeeded := 0
+			if currentLine.Len() > 0 {
+				spaceNeeded = 1
+			}
+			
+			if currentLine.Len()+spaceNeeded+len(word) > width {
+				// Flush the current line if it has content
+				if currentLine.Len() > 0 {
+					wrapped = append(wrapped, currentLine.String())
+					currentLine.Reset()
+				}
+
+				// If word is longer than width, add it on its own line and continue
+				if len(word) > width {
+					wrapped = append(wrapped, word)
+					continue
+				}
+
+				// Start new line with this word
+				currentLine.WriteString(word)
+			} else {
+				// Add space and word to current line (space only if line not empty)
+				if currentLine.Len() > 0 {
+					currentLine.WriteString(" ")
+				}
+				currentLine.WriteString(word)
+			}
+		}
+
+		// Don't forget the last line
+		if currentLine.Len() > 0 {
+			wrapped = append(wrapped, currentLine.String())
+		}
+	}
+
+	return strings.Join(wrapped, "\n")
+}
+
 func cleanLicenseText(text string) string {
 	// Decode HTML entities
 	text = decodeHTMLEntities(text)
@@ -401,6 +483,9 @@ func cleanLicenseText(text string) string {
 	// Join and trim
 	result := strings.Join(cleanedLines, "\n")
 	result = strings.TrimSpace(result)
+
+	// Wrap long lines at a reasonable column width
+	result = wrapText(result, 78)
 
 	// Ensure trailing newline
 	if !strings.HasSuffix(result, "\n") {
