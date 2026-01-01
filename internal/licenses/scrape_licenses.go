@@ -373,6 +373,72 @@ func extractText(n *html.Node, builder *strings.Builder) {
 	}
 }
 
+// wrapText wraps text at the specified column width, preferring to break at word boundaries.
+// It preserves paragraph breaks (empty lines) and handles lines that are already shorter than the width.
+func wrapText(text string, width int) string {
+	if width <= 0 {
+		return text
+	}
+
+	lines := strings.Split(text, "\n")
+	var wrapped []string
+
+	for _, line := range lines {
+		// Preserve empty lines (paragraph breaks)
+		if strings.TrimSpace(line) == "" {
+			wrapped = append(wrapped, "")
+			continue
+		}
+
+		// If line is already short enough, keep it as-is
+		if len(line) <= width {
+			wrapped = append(wrapped, line)
+			continue
+		}
+
+		// Wrap long lines
+		words := strings.Fields(line)
+		if len(words) == 0 {
+			wrapped = append(wrapped, "")
+			continue
+		}
+
+		var currentLine strings.Builder
+		currentLine.WriteString(words[0])
+
+		for _, word := range words[1:] {
+			// Check if adding this word would exceed the width
+			// +1 for the space between words
+			if currentLine.Len()+1+len(word) > width {
+				// If the word itself is longer than width, we have to split it awkwardly
+				// But first, flush the current line
+				if currentLine.Len() > 0 {
+					wrapped = append(wrapped, currentLine.String())
+					currentLine.Reset()
+				}
+
+				// If word is longer than width, add it on its own line
+				if len(word) > width {
+					wrapped = append(wrapped, word)
+				} else {
+					currentLine.WriteString(word)
+				}
+			} else {
+				// Add space and word to current line
+				currentLine.WriteString(" ")
+				currentLine.WriteString(word)
+			}
+		}
+
+		// Don't forget the last line
+		if currentLine.Len() > 0 {
+			wrapped = append(wrapped, currentLine.String())
+		}
+	}
+
+	return strings.Join(wrapped, "\n")
+}
+
 func cleanLicenseText(text string) string {
 	// Decode HTML entities
 	text = decodeHTMLEntities(text)
@@ -401,6 +467,9 @@ func cleanLicenseText(text string) string {
 	// Join and trim
 	result := strings.Join(cleanedLines, "\n")
 	result = strings.TrimSpace(result)
+
+	// Wrap long lines at a reasonable column width
+	result = wrapText(result, 78)
 
 	// Ensure trailing newline
 	if !strings.HasSuffix(result, "\n") {
