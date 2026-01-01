@@ -53,6 +53,29 @@ Exit codes:
   0 - All required rules pass
   1 - One or more required rules failed`,
 	Run: func(cmd *cobra.Command, args []string) {
+		// Check for mutually exclusive options
+		conventionID := checkFlags.conventionID
+		if conventionID == "" && len(args) > 0 {
+			conventionID = args[0]
+		}
+
+		optionsCount := 0
+		if checkFlags.conventionFile != "" {
+			optionsCount++
+		}
+		if conventionID != "" {
+			optionsCount++
+		}
+		if checkFlags.all {
+			optionsCount++
+		}
+
+		if optionsCount > 1 {
+			fmt.Println("error: --file, --convention (or convention name argument), and --all are mutually exclusive")
+			fmt.Println("please specify only one way to select conventions")
+			os.Exit(1)
+		}
+
 		// Determine the target directory
 		targetDir := checkFlags.directory
 		if targetDir == "" {
@@ -91,12 +114,7 @@ Exit codes:
 		}
 
 		// Option 2: Find by ID/name (from flag or argument)
-		conventionID := checkFlags.conventionID
-		if conventionID == "" && len(args) > 0 {
-			conventionID = args[0]
-		}
-
-		if conventionID != "" && checkFlags.conventionFile == "" {
+		if conventionID != "" {
 			allConventions, err := conventions.Load()
 			if err != nil {
 				fmt.Printf("error loading conventions: %v\n", err)
