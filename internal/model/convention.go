@@ -180,12 +180,14 @@ func (c *Convention) Evaluate(targetDir string) (*CheckResult, error) {
 			result.PassCount++
 		} else {
 			switch rule.Level {
-			case Required, Prohibited:
-				result.FailCount++
 			case Preferred:
 				result.WarnCount++
 			case Optional:
+				// technically unreachable for Optional
 				result.SkipCount++
+			default:
+				// Required, Prohibited, or unspecified
+				result.FailCount++
 			}
 		}
 	}
