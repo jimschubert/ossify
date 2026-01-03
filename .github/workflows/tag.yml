@@ -13,13 +13,12 @@ on:
           - minor
           - major
 
-permissions:
-  contents: write
-  packages: write
-
 jobs:
   tag:
     uses: jimschubert/.workflows/.github/workflows/tag-next-version.yml@main
     with:
       bump: ${{ github.event.inputs.bump }}
     secrets: inherit
+    permissions:
+      contents: write
+      packages: write
