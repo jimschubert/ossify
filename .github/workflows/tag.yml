@@ -1,0 +1,21 @@
+name: Tag Next Version
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: 'Bumps the version (patch, minor, major)'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+jobs:
+  tag:
+    uses: jimschubert/.workflows/.github/workflows/tag-next-version.yml@main
+    with:
+      bump: ${{ github.event.inputs.bump }}
+    secrets: inherit
