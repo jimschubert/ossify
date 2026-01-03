@@ -13,6 +13,10 @@ on:
           - minor
           - major
 
+permissions:
+  contents: write
+  # packages: write
+
 jobs:
   tag:
     uses: jimschubert/.workflows/.github/workflows/tag-next-version.yml@main
@@ -20,6 +24,3 @@ jobs:
       bump: ${{ github.event.inputs.bump }}
       create_release: true
     secrets: inherit
-    permissions:
-      contents: write
-      packages: write
